@@ -46,9 +46,6 @@
 			#{addTime},
 			#{updateTime}
 		)
-		<!--<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
-			SELECT LAST_INSERT_ID() 
-		</selectKey>-->
 	</insert>
 	
 	<select id="findByJobId" parameterType="java.lang.Integer" resultMap="XxlJobLogGlue">
@@ -58,7 +55,7 @@
 		ORDER BY id DESC
 	</select>
 	<!--//TODO oracle支持调整 分页修改为oracle分页 -->
-<!--	<delete id="removeOld" >
+	<delete id="removeOld" >
 		DELETE FROM xxl_job_logglue
 		WHERE id NOT in(
 			SELECT id FROM(
@@ -69,7 +66,7 @@
 			<![CDATA[where rownum <  #{limit} ]]>
 			) t1
 		) AND job_id = #{jobId}
-	</delete>-->
+	</delete>
 	
 	<delete id="deleteByJobId" parameterType="java.lang.Integer" >
 		DELETE FROM xxl_job_logglue

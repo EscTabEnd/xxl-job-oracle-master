@@ -15,6 +15,7 @@ import com.xxl.job.core.util.NetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,9 +68,6 @@ public class XxlJobExecutor  {
     // ---------------------- start + stop ----------------------
     public void start() throws Exception {
 
-        // init logpath
-        XxlJobFileAppender.initLogPath(logPath);
-
         // init invoker, admin-client
         initAdminBizList(adminAddresses, accessToken);
 
@@ -81,7 +79,10 @@ public class XxlJobExecutor  {
         TriggerCallbackThread.getInstance().start();
 
         // init executor-server
-        initEmbedServer(address, ip, port, appname, accessToken);
+        int target_port = initEmbedServer(address, ip, port, appname, accessToken);
+
+        // init logpath
+        XxlJobFileAppender.initLogPath(logPath+ File.separator +"xxljob_"+target_port);
     }
     public void destroy(){
         // destroy executor-server
@@ -138,7 +139,7 @@ public class XxlJobExecutor  {
     // ---------------------- executor-server (rpc provider) ----------------------
     private EmbedServer embedServer = null;
 
-    private void initEmbedServer(String address, String ip, int port, String appname, String accessToken) throws Exception {
+    private int initEmbedServer(String address, String ip, int port, String appname, String accessToken) throws Exception {
 
         // fill ip port
         port = port>0?port: NetUtil.findAvailablePort(9999);
@@ -158,6 +159,8 @@ public class XxlJobExecutor  {
         // start
         embedServer = new EmbedServer();
         embedServer.start(address, port, appname, accessToken);
+
+        return port;
     }
 
     private void stopEmbedServer() {
